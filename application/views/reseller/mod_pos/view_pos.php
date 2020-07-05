@@ -37,7 +37,10 @@
                             echo "<tr>
                                     <td></td>
                                     <input type='hidden' value='".$this->uri->segment(3)."' name='idpd'>
-                                    <td ><select name='aa' class='select2 form-control' onchange=\"changeValue(this.value)\" autofocus>
+                                    <td >
+                                    
+                                    <div class='col-md-9'>
+                                    <select name='aa' class='select2 form-control' onchange=\"changeValue(this.value)\" style='width:95% !important' autofocus>
                                                                           <option value='' selected> Cari Barang </option>";
                                                                           $jsArray = "var prdName = new Array();\n";
                                                                           foreach ($barang as $r){
@@ -50,7 +53,14 @@
                                                                               $jsArray .= "prdName['" . $r['id_produk'] . "'] = {name:'" . addslashes($r['harga_konsumen']-$disk['diskon']) . "',desc:'".addslashes($r['satuan'])."'};\n";
                                                                             }
                                                                           }
-                                                                      echo "</select></td>
+                                                                      echo "</select>
+                                                                      </div>
+                                    <div id='vw_varian' class='col-md-3' style='display:none'>
+                                      <select id='varian' name='varian' class='select2 form-control pull-right' style='width:95% !important'>
+                                        <option value='' selected disabled>Varian</option>
+                                      </select>
+                                    </div>
+                                                                      </td>
                                     <td><input class='form-control' type='number' name='bb' value='$row[harga_jual]' id='harga'> </td>
                                     <td><input class='form-control' type='number' name='dd' value='1'></td>
                                     <td><input class='form-control' type='text' name='ee' id='satuan' value='$row[satuan]' readonly='on'> </td>
@@ -69,8 +79,9 @@
                         $sub_total = ($row['harga_jual']*$row['jumlah']);
                         $diskon = $row['diskon'];
                         $total += $sub_total - $diskon;
+                        //var_dump($row); exit;
                         echo "<tr><td class='text-center'>$no</td>
-                                  <td>$row[nama_produk]</td>
+                                  <td>$row[nama_produk] <span class='alert alert-primary pull-right' style='padding:0px !important; margin-bottom:0px !important; color:green'><b>$row[nama_varian]</b></span></td>
                                   <td class='text-center'>".rupiah($row['harga_jual'])."</td>
                                   <td class='text-center'>$row[jumlah]</td>
                                   <td class='text-center'>$row[satuan]</td>
@@ -124,16 +135,40 @@
 
 
 <script type="text/javascript">
+  $("#vw_varian").hide();
 <?php echo $jsArray; ?>
   function changeValue(id){
     document.getElementById('harga').value = prdName[id].name;
     document.getElementById('satuan').value = prdName[id].desc;
+    getVarian(id);
   };
   $(document).ready(function(){
     $('#jumlah_bayar').maskMoney({prefix:'', thousands:',', precision:0});
 
 
   });
+
+
+  function getVarian(id){
+    $("#vw_varian").hide();
+    $("select#varian").prop('required',false);
+    $(".ini_varnya").remove();
+    $.ajax({ 
+          type: 'POST', 
+          url: '<?= site_url('reseller/get_varian') ?>', 
+          data: { id: id }, 
+          dataType: 'json',
+          success: function (data) { 
+            jQuery.each(data.varian, function(index, item) {
+              $("#vw_varian").show()
+              $("select#varian").prop('required',true);
+              $('#varian').append("<option class='ini_varnya' value='"+item.id_varian+"'>"+item.nama_varian+" </option>");
+            });
+            
+        }
+    });
+    
+  }
   function uang_kembali(){
         var total_bayar = $('#total_bayar').val();
         var jumlah_bayar = $('#jumlah_bayar').val();

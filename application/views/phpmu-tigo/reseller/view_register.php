@@ -10,7 +10,7 @@
             <div class='alert alert-info'><b>PENTING!</b> Lengkapi Form dibawah ini untuk mendaftarkan diri Sebagai <b>Pembeli</b>, harap di isi dengan data yang sebenar-benarnya sesuai dengan KTP, Terima kasih...</div>
             <div class="block-content">
                 <div id="writecomment">
-                    <form action="<?php echo base_url(); ?>auth/register" method="POST" id="form_komentar">
+                    <form action="<?php echo base_url(); ?>auth/register" method="POST" id="form_komentar" enctype='multipart/form-data'>
                         <p class="contact-form-user">
                             <label for="c_name">Username<span class="required">*</label>
                             <input type="text" name='a' class="required" onkeyup="nospaces(this)" required/>
@@ -19,6 +19,11 @@
                         <p class="contact-form-user">
                             <label for="c_name">Password<span class="required">*</label>
                             <input type="password" name='b' class="required" onkeyup="nospaces(this)" required/>
+                        </p>
+
+                        <p class="contact-form-user">
+                            <label for="c_name">Foto Profile<span class="required">*</label>
+                            <input type="file" name='foto' class="required" onkeyup="nospaces(this)" required/>
                         </p>
 
                         <p class="contact-form-user">

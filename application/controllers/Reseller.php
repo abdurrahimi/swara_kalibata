@@ -669,7 +669,13 @@ class Reseller extends CI_Controller {
 	function detail_penjualan(){
 		cek_session_reseller();
 		$data['rows'] = $this->model_reseller->penjualan_konsumen_detail_reseller($this->uri->segment(3))->row_array();
-		$data['record'] = $this->model_app->view_join_where('rb_penjualan_detail','rb_produk','id_produk',array('id_penjualan'=>$this->uri->segment(3)),'id_penjualan_detail','DESC');
+		/*$data['record'] = $this->model_app->view_join_where('rb_penjualan_detail','rb_produk','id_produk',array('id_penjualan'=>$this->uri->segment(3)),'id_penjualan_detail','DESC');*/
+		$data['record'] = $this->db->join('rb_produk b','a.id_produk = b.id_produk')
+										   ->join('rb_produk_varian c','a.id_varian = c.id_varian','left')
+										   ->where('id_penjualan',$this->uri->segment(3))
+										   ->order_by('id_penjualan_detail','DESC')
+										   ->get('rb_penjualan_detail a')
+										   ->result_array();
 		$this->template->load($this->uri->segment(1).'/template',$this->uri->segment(1).'/mod_penjualan/view_penjualan_detail',$data);
 	}
 
@@ -806,6 +812,7 @@ class Reseller extends CI_Controller {
 					$datadetail = array('id_penjualan'=>$idp,
 			        			  'id_produk'=>$poss->id_produk,
 			        			  'jumlah'=>$poss->jumlah,
+			        			  'id_varian' => $poss->id_varian,
 			        			  'harga_jual'=>$poss->harga_jual,
 			        			  'satuan'=>$poss->satuan);
 				    $this->model_app->insert('rb_penjualan_detail',$datadetail);
@@ -817,19 +824,20 @@ class Reseller extends CI_Controller {
 
 		}elseif(isset($_POST['submit'])){
 			$nama = $this->input->post('a');
-			$jual = $this->model_reseller->jual_reseller($this->session->id_reseller, $this->input->post('aa'))->row_array();
-            $beli = $this->model_reseller->beli_reseller($this->session->id_reseller, $this->input->post('aa'))->row_array();
+			$jual = $this->model_reseller->jual_reseller($this->session->id_reseller, $this->input->post('aa'),$this->input->post('varian'))->row_array();
+            $beli = $this->model_reseller->beli_reseller($this->session->id_reseller, $this->input->post('aa'),$this->input->post('varian'))->row_array();
             $stok = $beli['beli']-$jual['jual'];
             if ($this->input->post('dd') > $stok){
             	echo "<script>window.alert('Maaf, Stok Tidak Mencukupi!');
                                   window.location=('".base_url().$this->uri->segment(1)."/pos')</script>";
             }else{
-				$cektemp = $this->model_app->view_where('rb_pos_temp',array('id_reseller'=>$this->session->id_reseller,'id_produk'=>$this->input->post('aa')));
+				$cektemp = $this->model_app->view_where('rb_pos_temp',array('id_reseller'=>$this->session->id_reseller,'id_produk'=>$this->input->post('aa'),'id_varian'=>$this->input->post('varian')));
 		        if ($cektemp->num_rows()<1){
 					$data = array('id_reseller'=>$this->session->id_reseller,
 			        			  'id_produk'=>$this->input->post('aa'),
 			        			  'jumlah'=>$this->input->post('dd'),
 			        			  'harga_jual'=>$this->input->post('bb'),
+			        			  'id_varian' => $this->input->post('varian'),
 			        			  'satuan'=>$this->input->post('ee'));
 					$this->model_app->insert('rb_pos_temp',$data);
 				}else{
@@ -846,12 +854,28 @@ class Reseller extends CI_Controller {
 			
 		}else{
 			$idreseller = $this->session->id_reseller;
-			$data['record'] = $this->db->query("SELECT a.*,b.nama_produk FROM rb_pos_temp a 
+			$data['record'] = $this->db->query("SELECT c.nama_varian,a.*,b.nama_produk FROM rb_pos_temp a 
 			LEFT JOIN rb_produk b ON a.id_produk = b.id_produk
+			LEFT JOIN rb_produk_varian c on a.id_varian = c.id_varian
 			WHERE a.id_reseller = '$idreseller'")->result_array();
 			$data['barang'] = $this->model_app->view_where_ordering('rb_produk',array('id_reseller'=>$this->session->id_reseller),'id_produk','asc');
 			$this->template->load($this->uri->segment(1).'/template',$this->uri->segment(1).'/mod_pos/view_pos',$data);
 		}
+	}
+
+	function get_varian()
+	{
+		$id = $this->input->post('id');
+		if(empty($id)){
+			redirect(base_url());
+		}
+		$data['varian'] = $this->db->select('a.nama_varian,a.id_varian')
+	    					->where('a.id_produk',$id)
+	    					->get('rb_produk_varian a')
+	    					->result();
+	    header("Content-type:application/json");
+	    echo json_encode($data);
+	    exit;
 	}
 
 	function transaksi_penjualan_print(){

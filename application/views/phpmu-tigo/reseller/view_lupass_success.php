@@ -22,7 +22,7 @@
     <div class="login-box"> 
       <div class="login-box-body">
         <h3><?= $title ?></h3>
-        <span><?= $email ?></span>
+        <span>Silahkan Cek Email Anda <?= $email ?></span>
       </div><!-- /.login-box-body -->
     </div><!-- /.login-box -->
 

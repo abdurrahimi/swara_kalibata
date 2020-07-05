@@ -31,6 +31,14 @@
               $disk = $this->model_app->edit('rb_produk_diskon',array('id_produk'=>$rows['id_produk'],'id_reseller'=>$this->session->id_reseller))->row_array();
               $jual = $this->model_reseller->jual_reseller($this->session->id_reseller,$rows['id_produk'])->row_array();
               $beli = $this->model_reseller->beli_reseller($this->session->id_reseller,$rows['id_produk'])->row_array();
+              $data_varian = $this->db->where('id_produk',$rows['id_produk'])->get('rb_produk_varian')->result();
+              $isi_varian = "";
+              foreach ($data_varian as $key => $value) {
+                $isi_varian .= "<tr id='1'><th id='varian' scope='row'>Varian</th><td><div class='col-md-9' style='padding-left:0px !important; padding-right:0px !important'><input id='varians' type='text' class='form-control varian' name='varian[]' placeholder='Masukkan nama varian...' required></div><div class='col-md-2' style='padding-right:0px !important;'><input id='stocks' type='text' class='form-control varian' name='stock[]' placeholder='Jumlah Stock'></div><a onclick='removerow(3)' style='font-size:36px; color:red; margin-left:50px !important' class='fa fa-minus-circle'></a></td></tr>
+                    <tr><td colspan='2'><div class='pull-right' style='padding-left:0px !important'><a class='btn btn-primary' onclick='addrow()'><i class='fa fa-plus'></i>&nbspAdd More</a></div></td></tr>";
+              }
+
+              
           echo "<div class='col-md-12'>
                   <table class='table table-condensed table-bordered'>
                   <tbody>
@@ -57,6 +65,7 @@
                                                                                 }
                     echo "</select></td></tr>
                     <tr><th width='130px' scope='row'>Nama Produk</th>  <td><input type='text' class='form-control' name='b' value='$rows[nama_produk]' required></td></tr>
+
                     <tr><th scope='row'>Varian</th><td><input type='text' class='form-control' name='varian' placeholder='pisahkan dengan TITIK KOMA, contoh: Warna Hitam; Warna Merah; Warna Putih; Warna Hijau' value='$rows[varian]'></td></tr>
                     <tr><th scope='row'>Satuan</th>                     <td><input type='text' class='form-control' name='c' value='$rows[satuan]'></td></tr>
                     <tr><th scope='row'>Berat / Gram</th>                      <td><input type='number' class='form-control' name='berat' value='$rows[berat]'></td></tr>

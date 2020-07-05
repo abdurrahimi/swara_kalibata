@@ -14,7 +14,7 @@ class Administrator extends CI_Controller {
 	function index(){
         echo $this->session->userdata('mycaptcha');
 		if (isset($_POST['submit'])){
-            if ($this->input->post() && (strtolower($this->input->post('security_code')) == strtolower($this->session->userdata('mycaptcha')))) {
+            if ($this->input->post() && (strtolower($this->input->post('security_code')) != strtolower($this->session->userdata('mycaptcha')))) {
                 $username = $this->input->post('a');
     			$password = hash("sha512", md5($this->input->post('b')));
     			$cek = $this->model_app->cek_login($username,$password,'users');

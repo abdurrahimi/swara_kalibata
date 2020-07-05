@@ -247,7 +247,8 @@ class Auth extends CI_Controller {
 			}else{
 				$data['email'] = $email;
 				$data['title'] = 'Email Tidak Ditemukan...';
-				$this->template->load(template().'/template',template().'/reseller/view_lupass_error',$data);
+				$this->session->set_flashdata('message', '<div class="alert alert-danger"><center>Email Tidak Ditemukan. Silahkan Periksa kembali...</center></div>');
+				$this->template->load(template().'/template',template().'/reseller/view_lupass',$data);
 			}
 		}else{
 			$this->template->load(template().'/template',template().'/reseller/view_lupass');

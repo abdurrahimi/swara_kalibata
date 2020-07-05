@@ -1,43 +1,55 @@
 <style type="text/css">
-	.dropbtn {
-  background-color: #3498DB;
-  color: white;
-  padding: 16px;
-  font-size: 16px;
-  border: none;
-  cursor: pointer;
+.modal-dialog,
+.modal.right .modal-dialog {
+	position: fixed;
+	margin: auto;
+	width: 270px;
+	height: 100%;
+	-webkit-transform: translate3d(0%, 0, 0);
+		-ms-transform: translate3d(0%, 0, 0);
+		 -o-transform: translate3d(0%, 0, 0);
+			transform: translate3d(0%, 0, 0);
 }
 
-/* Dropdown button on hover & focus */
-/* The container <div> - needed to position the dropdown content */
-.dropdown {
-  position: absolute;
-  display: inline-block;
+.modal-content,
+.modal.right .modal-content {
+	height: 100%;
+	overflow-y: auto;
 }
 
-/* Dropdown Content (Hidden by Default) */
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: #f1f1f1;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
+.modal-body,
+.modal.right .modal-body {
+	padding: 15px 15px 80px;
 }
 
-/* Links inside the dropdown */
-.dropdown-content a {
-  color: black;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
+.modal.right.fade .modal-dialog {
+	right: -320px;
+	-webkit-transition: opacity 0.3s linear, right 0.3s ease-out;
+	   -moz-transition: opacity 0.3s linear, right 0.3s ease-out;
+		 -o-transition: opacity 0.3s linear, right 0.3s ease-out;
+			transition: opacity 0.3s linear, right 0.3s ease-out;
 }
 
-/* Change color of dropdown links on hover */
-.dropdown-content a:hover {background-color: #ddd}
+.modal.right.fade.in .modal-dialog {
+	right: 0;
+}
 
-/* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
-.show {display:block;}
+div.modal-backdrop.fade.in{
+	display: none !important;
+}
+
+.modal-content {
+	border-radius: 0;
+	border: none;
+}
+
+.modal-header {
+	border-bottom-color: #fff;
+	background-color: #2a9230;
+	box-shadow: inset 0px -140px 200px -50px rgba(0,0,0,0.15);
+}
+
+
 </style>
 <script type="text/javascript">
 	function myFunction() {
@@ -59,6 +71,7 @@ window.onclick = function(event) {
 }
 </script>
 <?php
+$row_user = $this->db->where('id_konsumen',$this->session->userdata('id_konsumen'))->get('rb_konsumen')->row();
 echo "<div class='wrapper'>
 	<div class='header-logo'>";
 		  $iden = $this->model_utama->view('identitas')->row_array();
@@ -99,7 +112,6 @@ echo "<div class='wrapper'>
 			</form>
 		</div>
 	</div>
-
 	<div class='header-addons'>
 		<span class='city'>
 		  ".hari_ini(date('w')).", ".tgl_indo(date('Y-m-d')).", <span id='jam'></span></span><br>";
@@ -113,18 +125,9 @@ echo "<div class='wrapper'>
             	  <a href='".base_url()."members/keranjang'><b>
             	  	<span class='glyphicon glyphicon glyphicon-shopping-cart' style='font-size:19px'></span></b>
             	  	<span class='badge badgee'>".rupiah($isi_keranjang['jumlah'])."</span></a> &nbsp;
-            	  
-            	  
-            	  <div class='dropdown' style='z-index:1002'>
-            	  <button onclick='myFunction()' id='dropbtn' class='btn btn-xs btn-success'><i class='fa fa-user'></i> Account</button>
-            	  <br>
-					  <div id='myDropdown' class='dropdown-content'>
-					    <a href='#'>Link 1</a>
-					    <a href='#'>Link 2</a>
-					    <a class='btn btn-xs btn-success' style='padding:1px 12px' href='".base_url()."members/profile'>Account</a>
-					    <a class='btn btn-xs btn-danger' style='padding:1px 12px' href='".base_url()."members/logout'>Logout</a><br>
-					  </div>
-					</div>";
+            	  	<button type='button' class='btn btn-xs btn-success' data-toggle='modal' data-target='#myModal2'>
+						My Account
+					</button>";
 
 
           }else{
@@ -137,9 +140,77 @@ echo "<div class='wrapper'>
                   <a class='btn btn-xs btn-default' style='width:60px; color:#000' href='".base_url()."auth/register'>Daftar</a>";
 
           }
+          $foto = !empty($row_user->foto)?base_url('asset/foto_user/'.$row_user->foto):base_url('asset/foto_user/blank.png');
+          $saldo_masuk = $this->db->query('select coalesce(sum(saldo),0) from rb_saldo_konsumen where tipe = 1 and id_konsumen = ?',$row_user->id_user);
+          $saldo_keluar = $this->db->query('select coalesce(sum(saldo),0) from rb_saldo_konsumen where tipe = 2 and id_konsumen = ?',$row_user->id_user);
 	echo "</div>
 </div>
+<div class='modal right fade' id='myModal2' tabindex='-1' role='dialog' aria-labelledby='myModalLabel2'>
+	<div class='modal-dialog' role='document'>
+		<div class='modal-content'>
+			<div class='modal-header'>
+				<span style='font-size:20px'><ion-icon name='person-circle-outline'></ion-icon>&nbsp&nbspProfile</span>
+				<button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button>
+			</div>
+			<div class='modal-body' style='background-color:#fff'>
+				<table>
+					<tr>
+						<td width='30%' style='padding-right:10px'>
+							<center>
+								<a style='padding:1px 12px' href='".base_url()."members/profile'><img src='".$foto."' style='width:48px; height:48px; border-radius:50%'></a>
+							</center>
+						</td>
+						<td style='color:#000 !important; vertical-align: center;font-family: Arial, sans-serif;'>
+							<a style='padding:1px 12px' href='".base_url()."members/profile'><b style='font-size:16px; color:#000 !important; font-family: Arial, sans-serif;'>".$row_user->nama_lengkap."</b></a><br>
+							&nbsp&nbsp<i style='font-size:12px'><ion-icon name='person-outline'></ion-icon>&nbsp;Member</i>
+						</td>
+					</tr>
+				</table>
+				<br>
+				<hr>
+				<div class='panel-group' id='accordion'>
+				  <div class='panel panel-default' style='border:0px !important'>
+				    <div class='panel-heading'>
+				      <h4 class='panel-title'>
+				        <a class='accordion-toggle' data-toggle='collapse' data-parent='#accordion' href='#collapseOne'>
+				          <ion-icon name='arrow-forward-circle-outline'></ion-icon>&nbsp;&nbsp;&nbsp;&nbsp;Profile
+				        </a>
+				      </h4>
+				    </div>
 
+				    <div id='collapseOne' class='panel-collapse collapse in' style='margin-left:10px'>
+				      <div class='panel-body' >
+				        <a class='dropdown-item' href='".base_url()."members/profile' style='color:#000'><ion-icon name='person' ></ion-icon>&nbsp;&nbsp;My Profile</a><br><hr>
+				        <a class='dropdown-item' href='".base_url()."members/orders_report' style='color:#000'><ion-icon name='pricetags-outline' style='color:red'></ion-icon>&nbsp;&nbsp;Status Transaksi</a>
+				      </div>
+				    </div>
+				  </div>
+				  <br>
+				  <div class='panel panel-default' style='border:0px !important'>
+				    <div class='panel-heading'>
+				      <h4 class='panel-title'>
+				        <a class='accordion-toggle collapsed' data-toggle='collapse' data-parent='#accordion' href='#collapseTwo'>
+				          <ion-icon name='wallet-outline'></ion-icon>&nbsp;&nbsp;&nbsp;&nbsp;Saldo
+				        </a>
+				      </h4>
+				    </div>
+				    <div id='collapseTwo' class='panel-collapse collapse in'>
+				      <div class='panel-body'>
+				        <table style='width:100%; margin-left:10px'>
+				        	<tr>
+				        		<td style='width:50%; color:#000'><ion-icon name='cash-outline' style='color:#2a9230'></ion-icon>&nbsp;&nbsp;Sisa saldo </td>
+				        		<td class='text-right' style='color:#656565'><b>Rp ".number_format(($saldo_masuk-$saldo_keluar),0,'.',',').",- </b></td>
+				        	</tr>
+				        </table>
+				      </div>
+				    </div>
+				  </div>
+				</div>
+				<a class='btn btn-lg btn-danger col-sm-10' style='padding:1px 12px' href='".base_url()."members/logout'><ion-icon name='log-out-outline' style='color:#fff;'></ion-icon>&nbsp;&nbsp;&nbsp;&nbsp;Logout</a>
+			</div>
+		</div><!-- modal-content -->
+	</div><!-- modal-dialog -->
+</div><!-- modal -->
 <div class='main-menu sticky'>
 	<div class='wrapper'>";
 		function main_menu() {

@@ -37,11 +37,13 @@
                     <tbody>
                   <?php 
                     $no = 1;
+                   // var_dump($record);
                     foreach ($record as $row){
+
                     $sub_total = ($row['harga_jual']*$row['jumlah'])-$row['diskon'];
                     echo "<tr><td>$no</td>
                               <td>$row[nama_produk]</td>
-                              <td>$row[variasi]</td>
+                              <td>$row[nama_varian]</td>
                               <td>Rp ".rupiah($row['harga_jual'])."</td>
                               <td>$row[jumlah]</td>
                               <td>$row[satuan]</td>

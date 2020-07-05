@@ -186,6 +186,7 @@ class Model_reseller extends CI_model{
     }
 
     function profile_update($id){
+        $foto = $this->upload();
         if (trim($this->input->post('a')) != ''){
             $datadbd = array('username'=>$this->db->escape_str(strip_tags($this->input->post('aa'))),
                             'password'=>hash("sha512", md5($this->input->post('a'))),
@@ -193,6 +194,7 @@ class Model_reseller extends CI_model{
                             'email'=>$this->db->escape_str(strip_tags($this->input->post('c'))),
                             'jenis_kelamin'=>$this->db->escape_str($this->input->post('d')),
                             'tanggal_lahir'=>$this->db->escape_str($this->input->post('e')),
+                            'foto' => $foto,
                             'tempat_lahir'=>$this->db->escape_str(strip_tags($this->input->post('f'))),
                             'alamat_lengkap'=>$this->db->escape_str(strip_tags($this->input->post('g'))),
                             'kecamatan'=>$this->db->escape_str(strip_tags($this->input->post('k'))),
@@ -203,6 +205,7 @@ class Model_reseller extends CI_model{
                             'nama_lengkap'=>$this->db->escape_str(strip_tags($this->input->post('b'))),
                             'email'=>$this->db->escape_str(strip_tags($this->input->post('c'))),
                             'jenis_kelamin'=>$this->db->escape_str($this->input->post('d')),
+                            'foto' => $foto,
                             'tanggal_lahir'=>$this->db->escape_str($this->input->post('e')),
                             'tempat_lahir'=>$this->db->escape_str(strip_tags($this->input->post('f'))),
                             'alamat_lengkap'=>$this->db->escape_str(strip_tags($this->input->post('g'))),
@@ -212,6 +215,32 @@ class Model_reseller extends CI_model{
         }
         $this->db->where('id_konsumen',$id);
         $this->db->update('rb_konsumen',$datadbd);
+    }
+
+    function upload()
+    {
+        $upload_path = './asset/foto_user';
+        if ($_FILES['file']['name'] <> "") {
+            $ext           = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
+            $foto = "profile_".date("dmYHis").rand(100,999).".".$ext;
+
+            $config['upload_path']   = $upload_path;
+            $config['allowed_types'] = 'PNG|png|JPG|jpg|JPEG|jpeg';
+            $config['file_name']     = $foto;
+
+            $this->load->library('upload', $config);
+            $this->upload->initialize($config);
+            if ( ! $this->upload->do_upload('file')){
+                /*$error = 'error: '. $this->upload->display_errors();
+                echo $error;
+                die();*/
+                return NULL;
+            }else{
+                return $foto;
+            }
+        }else{
+            return NULL;
+        }
     }
 
     function penjualan_list_konsumen_top($id,$level){
