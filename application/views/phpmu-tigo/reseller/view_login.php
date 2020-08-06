@@ -19,7 +19,7 @@
                     </div>
 
                     <div align="center">
-                        <input name='login' type="submit" class="btn btn-primary" value="Login"> <a href="#" class="btn btn-default" data-toggle='modal' data-target='#lupass'>Lupa Password?</a> <br><br> Anda Belum Punya akun? <a href="<?php echo base_url(); ?>auth/register" title="Mari gabung bersama Kami" class="link">Daftar Disini.</a>
+                        <input name='login' type="submit" class="btn btn-primary" value="Login"> <a href="<?= base_url('auth/lupass') ?>" class="btn btn-default">Lupa Password?</a> <br><br> Anda Belum Punya akun? <a href="<?php echo base_url(); ?>auth/register" title="Mari gabung bersama Kami" class="link">Daftar Disini.</a>
                     </div>
                 </form>
             </div>

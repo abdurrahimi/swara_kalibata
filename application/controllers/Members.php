@@ -412,6 +412,17 @@ class Members extends CI_Controller {
         }
     }
 
+    public function topup()
+    {
+    	cek_session_members();
+		$data = [
+			'title' => 'Top Up Saldo',
+			'listData' => $this->model_app->view('topup_setting')->result(),
+		];
+
+		$this->template->load(template().'/template',template().'/reseller/members/view_topup',$data);
+    }
+
 	function logout(){
 		cek_session_members();
 		$this->session->sess_destroy();

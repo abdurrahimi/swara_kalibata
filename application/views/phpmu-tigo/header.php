@@ -199,7 +199,7 @@ echo "<div class='wrapper'>
 				        <table style='width:100%; margin-left:10px'>
 				        	<tr>
 				        		<td style='width:50%; color:#000'><ion-icon name='cash-outline' style='color:#2a9230'></ion-icon>&nbsp;&nbsp;Sisa saldo </td>
-				        		<td class='text-right' style='color:#656565'><b>Rp ".number_format(($saldo_masuk-$saldo_keluar),0,'.',',').",- </b></td>
+				        		<td class='text-right' ><a style='color:#656565' href='".base_url('members/topup')."'><b>Rp ".number_format(($saldo_masuk-$saldo_keluar),0,'.',',').",- </b></a></td>
 				        	</tr>
 				        </table>
 				      </div>

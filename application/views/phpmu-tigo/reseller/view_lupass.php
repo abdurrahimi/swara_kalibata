@@ -14,8 +14,15 @@
           </div>
           <div class="row">
             <div class="col-xs-4">
-              <button name='lupa' type="submit" class="btn btn-success btn-block btn-flat">Kirim</button>
+              
+            </div>
+            <div class="col-xs-4">
+              
             </div><!-- /.col -->
+            
+          </div>
+          <div align="center">
+              <button name='lupa' type="submit" class="btn btn-success">Kirim</button> <a href="<?= base_url('auth/login') ?>" class="btn btn-default">Batal</a> <br><br> Anda Belum Punya akun? <a href="<?php echo base_url(); ?>auth/register" title="Mari gabung bersama Kami" class="link">Daftar Disini.</a>
           </div>
         </form>
   </div>
